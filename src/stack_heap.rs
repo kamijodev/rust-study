@@ -1,3 +1,11 @@
+// Box pointerポインターにすることでサイズが決まらない無限ループをbox pointer(8byte)で確定できる
+enum List {
+    // i32 = 4byte
+    Node(i32, Box<List>),
+    // Nil = 0byte
+    Nil,
+}
+
 pub fn run() {
     // rustのstackの上限は8MB
     let a1: [u8; 7_000_000] = [1; 7_000_000];
@@ -29,4 +37,18 @@ pub fn run() {
     println!("Heap memory address of t1.1: data is: {:p}", t1.1.as_ptr());
     println!("len {}", t1.1.len());
     println!("cap {}", t1.1.capacity());
+
+    // b1はポインタ
+    let mut b1 = Box::new(t1);
+    (*b1).1 += "world";
+    println!("{} {}", b1.0, b1.1);
+    // boxポインタのポインタ
+    println!("{:p}", &b1);
+    println!("{:p}", b1);
+
+    // let mut t2 = ((0, 1), (2, 3));
+    // t2.0 .0 += 1;
+    // let ((ref mut x1_ptr, ref mut y1_ptr), _) = t2;
+    // *x1_ptr += 1;
+    // println!("{}", x1_ptr);
 }
